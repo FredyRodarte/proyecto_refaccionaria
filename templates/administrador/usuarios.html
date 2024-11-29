@@ -3,8 +3,59 @@
 {% block title %}Usuarios - Administrador{% endblock %}
 
 {% block content %}
-<!-- Este es el codigo que se editara-->
-<h1>Bienvenido, {{ nombre }}!</h1>
-<p>En esta pagina se mostran los usuarios.</p>
-<!-- Fin del codigo que se editara-->
+<h2>Gestión de Usuarios</h2>
+<input type="text" id="search-input" placeholder="Buscar usuarios..." onkeyup="searchUsers()">
+<button onclick="showAddUserForm()">Agregar Usuario</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Nickname</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in usuarios %}
+        <tr>
+            <td>{{ user.id_usuario }}</td>
+            <td>{{ user.nombre }}</td>
+            <td>{{ user.nickname }}</td>
+            <td>{{ user.rol }}</td>
+            <td>
+                <button onclick="showEditUserForm({{ user.id_usuario }})">Editar</button>
+                <button onclick="deleteUser({{ user.id_usuario }})">Eliminar</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+    <button {% if page == 1 %}disabled{% endif %} onclick="changePage({{ page - 1 }})">&lt;</button>
+    <span>Página {{ page }}</span>
+    <button {% if usuarios|length < 10 %}disabled{% endif %} onclick="changePage({{ page + 1 }})">&gt;</button>
+</div>
+
+<!-- Formulario modal para agregar y editar usuarios -->
+<div id="user-form-modal" class="modal">
+    <form id="user-form">
+        <input type="hidden" id="user-id">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombreUser" required>
+        <label for="nickname">Nickname:</label>
+        <input type="text" id="nicknameUser" required>
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" id="contraseñaUser" required>
+        <label for="rolUser">Rol:</label>
+        <select id="rolUser">
+            <option value="administrador">Administrador</option>
+            <option value="almacenista">Almacenista</option>
+        </select>
+        <button type="button" onclick="saveUser()">Guardar</button>
+        <button type="button" onclick="closeModal()">Cancelar</button>
+    </form>
+</div>
 {% endblock %}

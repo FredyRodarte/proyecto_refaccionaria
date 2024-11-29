@@ -17,6 +17,7 @@ ul li a {
     text-decoration: none;
     padding: 8px 16px;
     font-size: 19px;
+    border-radius: 5px;
 }
 
 ul li a i {

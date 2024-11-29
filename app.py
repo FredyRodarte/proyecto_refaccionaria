@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
 import mysql.connector
 from dotenv import load_dotenv
 import os
+import pymysql
 
 
 # Cargar variables de entorno
@@ -69,7 +70,52 @@ def usuario():
 #Rutas para los modulos de administrador:
 @app.route('/admin/usuarios')
 def admin_usuarios():
-    return render_template('administrador/usuarios.html', nombre = session['nombre'])
+    page = int(request.args.get('page', 1))
+    search = request.args.get('search', '')
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    offset = (page - 1) * 10
+    query = f"SELECT * FROM usuarios WHERE nombre LIKE %s LIMIT 10 OFFSET %s"
+    cursor.execute(query, (f"%{search}%", offset))
+    usuarios = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('administrador/usuarios.html', usuarios=usuarios, page=page, search=search,  nombre = session['nombre'])
+
+# Rutas para agregar, editar y eliminar (ejemplo para agregar)
+@app.route('/admin_usuarios/guardar', methods=['POST'])
+def agregar_usuario():
+    try:
+        data = request.json
+        nombre = data['nombre']
+        nickname = data['nickname']
+        contraseña = data['contraseña']
+        rol = data['rol']
+        
+        #print("datos del data", data)
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        if data['id']:
+            # Actualizar usuario existente
+            query = "UPDATE usuarios SET nombre=%s, nickname=%s, contraseña=%s, rol=%s WHERE id_usuario=%s"
+            cursor.execute(query, (nombre, nickname, contraseña, rol, data['id']))
+        else:
+            # Agregar nuevo usuario
+            query = "INSERT INTO usuarios (nombre, nickname, contraseña, rol) VALUES (%s, %s, %s, %s)"
+            cursor.execute(query, (nombre, nickname, contraseña, rol))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False,"message":str(e)})
 
 @app.route('/admin/productos')
 def admin_productos():
