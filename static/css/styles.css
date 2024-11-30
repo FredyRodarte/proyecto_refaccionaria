@@ -110,3 +110,138 @@ footer {
     margin-left: 2%;
     margin-right: 2%;
 }
+
+.table-proveedores {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.table-proveedores th, .table-proveedores td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.table-proveedores th {
+    background-color: #88a3bf;
+    color: white;
+}
+
+.action-buttons {
+    margin-bottom: 20px;
+}
+
+.action-buttons button {
+    margin-right: 10px;
+    padding: 10px 15px;
+    background-color: #1ABC9C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.action-buttons button:hover {
+    background-color: #317ecb;
+}
+
+
+
+
+
+
+
+
+/*Aqui empieza el estilo de los formularios de proveedores*/
+.form-proveedor {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form-proveedor label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-proveedor input,
+.form-proveedor textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-proveedor button {
+    padding: 10px 15px;
+    background-color: #1ABC9C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.form-proveedor button:hover {
+    background-color: #16A085;
+}
+
+.btn-secondary {
+    padding: 10px 15px;
+    background-color: #ccc;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.btn-secondary:hover {
+    background-color: #bbb;
+}
+
+.form_mod {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form_mod label{
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form_mod input,
+.form_mod textarea{
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form_mod button {
+    padding: 10px 15px;
+    background-color: #1ABC9C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+
+.form_mod button:hover {
+    background-color: #16A085;
+}

@@ -75,9 +75,71 @@ def admin_usuarios():
 def admin_productos():
     return render_template('administrador/productos.html', nombre = session['nombre'])
 
+#----------------------------------------------------------------------------------------------------
+#aqui estan las funciones de proveedores
+#funcion agregada para mostrar los proveedores en la tabla
 @app.route('/admin/proveedores')
 def admin_proveedores():
-    return render_template('administrador/proveedores.html', nombre = session['nombre'])
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT id_proveedor, nombre, contacto, telefono, direccion FROM Proveedores"
+    cursor.execute(query)
+    proveedores = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('administrador/proveedores.html',proveedores=proveedores)
+
+@app.route('/admin/agregar_proveedor', methods=['GET', 'POST'])
+def agregar_proveedor():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        contacto = request.form['contacto']
+        telefono = request.form['telefono']
+        direccion = request.form['direccion']
+        conn = get_db_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO Proveedores (nombre, contacto, telefono, direccion) VALUES (%s, %s, %s, %s)",
+                           (nombre, contacto, telefono, direccion))
+            conn.commit()
+        finally:
+            cursor.close()
+            conn.close()
+        return redirect(url_for('admin_proveedores'))
+    return render_template('/administrador/agregar_proveedor.html')
+
+@app.route('/admin/modificar_proveedor/<int:id>', methods=['GET', 'POST'])
+def modificar_proveedor(id):
+    print(f"Modificando proveedor con ID: {id}")
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM Proveedores WHERE id_proveedor=%s", (id,))
+    proveedor = cursor.fetchone()
+    print(f"Proveedor encontrado: {proveedor}")
+    if not proveedor:
+        return "Proveedor no encontrado", 404
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        contacto = request.form['contacto']
+        telefono = request.form['telefono']
+        direccion = request.form['direccion']
+        cursor.execute("UPDATE Proveedores SET nombre=%s, contacto=%s, telefono=%s, direccion=%s WHERE id_proveedor=%s",
+                       (nombre, contacto, telefono, direccion, id))
+        conn.commit()
+        return redirect(url_for('admin_proveedores'))
+    return render_template('/administrador/modificar_proveedor.html', proveedor=proveedor)
+
+@app.route('/admin/eliminar_proveedor/<int:id>',methods=['POST'])
+def eliminar_proveedor(id):
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Proveedores WHERE id_proveedor=%s", (id,))
+        conn.commit()
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for('admin_proveedores'))
 
 @app.route('/admin/categorias')
 def admin_categorias():
