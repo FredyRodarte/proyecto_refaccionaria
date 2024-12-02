@@ -296,6 +296,9 @@ def eliminar_proveedor(id):
         cursor.close()
         conn.close()
     return redirect(url_for('admin_proveedores'))
+#Fin de funciones proveedores
+#--------------------------------------------------------------------------------------------
+
 
 @app.route('/admin/categorias')
 def admin_categorias():
