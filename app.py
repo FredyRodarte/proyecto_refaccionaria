@@ -89,6 +89,8 @@ def admin_productos():
 
 @app.route('/admin/agregar_producto', methods=['GET', 'POST'])
 def agregar_productos():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
     if request.method == 'POST':
         nombre = request.form['nombre']
         descripcion = request.form['descripcion']
@@ -119,14 +121,29 @@ def agregar_productos():
                 VALUES (%s, %s, %s, %s, %s, %s)
             """, (nombre, descripcion, cantidad, categoria_id, proveedor_id, ubicacion))
             conn.commit()
+            flash("Producto agregado exitosamente.", "success")
+            return redirect(url_for('admin_productos'))
         finally:
             cursor.close()
             conn.close()
+    
 
-        flash("Producto agregado exitosamente.", "success")
-        return redirect(url_for('admin_productos'))
+    else:
+        # Consultar categorías y proveedores para el formulario
+        try:
+            cursor.execute("SELECT id_categoria, nombre FROM Categorias")
+            categorias = cursor.fetchall()
 
-    return render_template('/administrador/agregar_productos.html')
+            cursor.execute("SELECT id_proveedor, nombre, contacto FROM Proveedores")
+            proveedores = cursor.fetchall()
+        finally:
+            cursor.close()
+            conn.close()
+        
+
+        return render_template('/administrador/agregar_productos.html',
+                               categorias = categorias,
+                               proveedores = proveedores)
 
 @app.route('/admin/modificar_producto/<int:id>', methods=['GET', 'POST'])
 def modificar_producto(id):

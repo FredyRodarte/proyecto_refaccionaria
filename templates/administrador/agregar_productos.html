@@ -18,13 +18,23 @@
       <input type="text" id="descripcion" name="descripcion" required>
 
       <label for="cantidad">Cantidad:</label>
-      <input type="int" id="cantidad" name="cantidad" required>
+      <input type="number" id="cantidad" name="cantidad" required>
 
-      <label for="categoria_id">Categoria:</label>
-      <input type="int" id="categoria_id" name="categoria_id" required>
-
-      <label for="proveedor_id">ID Proveedor:</label>
-      <input type="int" id="proveedor_id" name="proveedor_id" required>
+      <label for="categoria_id">Categoría:</label>
+      <select id="categoria_id" name="categoria_id" required>
+        <option value="" disabled selected>Selecciona una categoría</option>
+        {% for categoria in categorias %}
+          <option value="{{ categoria.id_categoria }}">{{ categoria.nombre }}</option>
+        {% endfor %}
+      </select>
+      
+      <label for="proveedor_id">Proveedor:</label>
+      <select id="proveedor_id" name="proveedor_id" required>
+        <option value="" disabled selected>Selecciona un proveedor</option>
+        {% for proveedor in proveedores %}
+          <option value="{{ proveedor.id_proveedor }}">{{ proveedor.nombre }} de {{proveedor.contacto}}</option>
+        {% endfor %}
+      </select>
 
       <label for="ubicacion">Ubicación:</label>
       <input type="text" id="ubicacion" name="ubicacion" required>
