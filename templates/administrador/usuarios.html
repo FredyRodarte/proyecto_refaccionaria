@@ -9,7 +9,7 @@
     </div>
     <div class="contendio">
         <div>
-            <button>Agregar usuario</button>
+            <button class="agregar" id="agregar-usuario" onclick="">Agregar usuario</button>
         </div>
         <div>
             <table class="tabla-usuarios" id="tabla">
@@ -27,14 +27,14 @@
                     {% if usuarios%}
                         {% for user in usuarios %}
                         <tr>
-                            <td>{{ user.id_usuarios }}</td>
+                            <td>{{ user.id_usuario }}</td>
                             <td>{{ user.nombre }}</td>
                             <td>{{ user.nickname }}</td>
                             <td>{{ user.contraseña }}</td>
                             <td>{{ user.rol }}</td>
                             <td>
-                                <button class="acciones" onclick="">Editar</button>
-                                <button class="acciones" oneclick="">Eliminar</button>
+                                <button class="editar-usuario" id="accion" onclick="">Editar</button>
+                                <button class="eliminar-usuario" id="accion" oneclick="">Eliminar</button>
                             </td>
                         </tr>
                         {% endfor %}
