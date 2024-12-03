@@ -3,8 +3,49 @@
 {% block title %}Usuarios - Administrador{% endblock %}
 
 {% block content %}
-<!-- Este es el codigo que se editara-->
-<h1>Bienvenido, {{ nombre }}!</h1>
-<p>En esta pagina se mostran los usuarios.</p>
-<!-- Fin del codigo que se editara-->
+<div class="contenedor">
+    <div class="titulo">
+        <h2>Gestionar Usuarios</h2>
+    </div>
+    <div class="contendio">
+        <div>
+            <button>Agregar usuario</button>
+        </div>
+        <div>
+            <table class="tabla-usuarios" id="tabla">
+                <thead class="tabla-cabecera" id="cabecera">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Nickname</th>
+                        <th>Contraseña</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if usuarios%}
+                        {% for user in usuarios %}
+                        <tr>
+                            <td>{{ user.id_usuarios }}</td>
+                            <td>{{ user.nombre }}</td>
+                            <td>{{ user.nickname }}</td>
+                            <td>{{ user.contraseña }}</td>
+                            <td>{{ user.rol }}</td>
+                            <td>
+                                <button class="acciones" onclick="">Editar</button>
+                                <button class="acciones" oneclick="">Eliminar</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No hay usuarios registrados</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

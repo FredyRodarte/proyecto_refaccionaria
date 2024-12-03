@@ -69,7 +69,14 @@ def usuario():
 #Rutas para los modulos de administrador:
 @app.route('/admin/usuarios')
 def admin_usuarios():
-    return render_template('administrador/usuarios.html', nombre = session['nombre'])
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT * FROM usuarios"
+    cursor.execute(query)
+    usuarios = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('administrador/usuarios.html', nombre = session['nombre'], usuarios = usuarios)
 
 
 
