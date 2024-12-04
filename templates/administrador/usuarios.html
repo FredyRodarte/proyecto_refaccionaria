@@ -9,7 +9,7 @@
     </div>
     <div class="contendio">
         <div>
-            <button class="agregar" id="agregar-usuario" onclick="">Agregar usuario</button>
+            <button class="agregar" id="agregar-usuario" onclick="guardarUsuario()">Agregar usuario</button>
         </div>
         <div>
             <table class="tabla-usuarios" id="tabla">
@@ -33,7 +33,7 @@
                             <td>{{ user.contraseña }}</td>
                             <td>{{ user.rol }}</td>
                             <td>
-                                <button class="editar-usuario" id="accion" onclick="">Editar</button>
+                                <button class="editar-usuario" id="accion" onclick="editarUsuario('{{ user.id_usuario }}')">Editar</button>
                                 <button class="eliminar-usuario" id="accion" oneclick="">Eliminar</button>
                             </td>
                         </tr>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import mysql.connector
 from dotenv import load_dotenv
 import os
@@ -67,6 +67,8 @@ def usuario():
     return redirect(url_for('index'))
 
 #Rutas para los modulos de administrador:
+#------------------------------------------
+#Funciones de usuario
 @app.route('/admin/usuarios')
 def admin_usuarios():
     conn = get_db_connection()
@@ -78,8 +80,9 @@ def admin_usuarios():
     conn.close()
     return render_template('administrador/usuarios.html', nombre = session['nombre'], usuarios = usuarios)
 
-
-
+@app.route('/admin/guardar_usuario', methods=['GET','POST'])
+def guardar_usuario():
+    return render_template('/administrador/guardar_usuarios.html', usuario=usuario)
 #--------------------------------------------------------------------------------------------------------
 #(Eduardo picazo)
 # Aqui estan las funciones para Productos
