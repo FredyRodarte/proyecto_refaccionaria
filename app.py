@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import mysql.connector
 from dotenv import load_dotenv
 import os
@@ -82,7 +82,33 @@ def admin_usuarios():
 
 @app.route('/admin/guardar_usuario', methods=['GET','POST'])
 def guardar_usuario():
+
     return render_template('/administrador/guardar_usuarios.html', usuario=usuario)
+
+@app.route('/admin/eliminar_usuario/<int:user_id>', methods=['POST'])
+def eliminar_usuario(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM usuarios WHERE id_usuario = %s", (user_id,))
+        conn.commit()
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return '', 204  # Respuesta vacía para AJAX (sin recargar página)
+        else:
+            flash('Usuario eliminado exitosamente', 'success')
+            return redirect(url_for('usuarios'))
+        
+    except mysql.connector.Error as err:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return str(err), 500
+        else:
+            flash(f"Error al eliminar el usuario: {err}", 'danger')
+            return redirect(url_for('usuarios'))
+    finally:
+        cursor.close()
+        conn.close()
 #--------------------------------------------------------------------------------------------------------
 #(Eduardo picazo)
 # Aqui estan las funciones para Productos

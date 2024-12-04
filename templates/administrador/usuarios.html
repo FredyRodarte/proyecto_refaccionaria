@@ -34,7 +34,7 @@
                             <td>{{ user.rol }}</td>
                             <td>
                                 <button class="editar-usuario" id="accion" onclick="editarUsuario('{{ user.id_usuario }}')">Editar</button>
-                                <button class="eliminar-usuario" id="accion" oneclick="">Eliminar</button>
+                                <button class="eliminar-usuario" id="accion" onclick="eliminarUsuario('{{ user.id_usuario }}')" >Eliminar</button>
                             </td>
                         </tr>
                         {% endfor %}
