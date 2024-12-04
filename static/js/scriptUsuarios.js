@@ -12,7 +12,7 @@ function editarUsuario(id){
 }
 
 function eliminarUsuario(userID){
-    console.log("Esta ingresando al evento onclick", userID)
+    //console.log("Esta ingresando al evento onclick", userID)
     if(confirm('¿Estas seguro de eliminar este usuario?')){
         fetch(`/admin/eliminar_usuario/${userID}`,{
             method: 'POST',
