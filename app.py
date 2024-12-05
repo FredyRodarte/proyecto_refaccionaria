@@ -180,17 +180,23 @@ def agregar_productos():
         return render_template('/administrador/agregar_productos.html',
                                categorias = categorias,
                                proveedores = proveedores)
-
 @app.route('/admin/modificar_producto/<int:id>', methods=['GET', 'POST'])
 def modificar_producto(id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
-    # Obtener el producto actual para mostrar en el formulario
+    # Obtener el producto actual
     cursor.execute("SELECT * FROM Productos WHERE id_producto=%s", (id,))
     producto = cursor.fetchone()
     if not producto:
         return "Producto no encontrado", 404
+
+    # Obtener categorías y proveedores para los menús desplegables
+    cursor.execute("SELECT id_categoria, nombre FROM Categorias")
+    categorias = cursor.fetchall()
+
+    cursor.execute("SELECT id_proveedor, nombre, contacto FROM Proveedores")
+    proveedores = cursor.fetchall()
 
     if request.method == 'POST':
         nombre = request.form['nombre']
@@ -200,18 +206,22 @@ def modificar_producto(id):
         proveedor_id = request.form['proveedor_id']
         ubicacion = request.form['ubicacion']
         
-        # Validar la existencia de `categoria_id`
+        # Validar existencia de categoría y proveedor
         cursor.execute("SELECT COUNT(*) FROM Categorias WHERE id_categoria = %s", (categoria_id,))
         categoria_existe = cursor.fetchone()['COUNT(*)'] > 0
 
-        # Validar la existencia de `proveedor_id`
         cursor.execute("SELECT COUNT(*) FROM Proveedores WHERE id_proveedor = %s", (proveedor_id,))
         proveedor_existe = cursor.fetchone()['COUNT(*)'] > 0
 
         if not categoria_existe or not proveedor_existe:
             # Mostrar mensaje de error si alguno no existe
             flash("La categoría o el proveedor especificados no existen.", "error")
-            return render_template('/administrador/modificar_productos.html', producto=producto)
+            return render_template(
+                '/administrador/modificar_productos.html',
+                producto=producto,
+                categorias=categorias,
+                proveedores=proveedores
+            )
 
         # Actualizar el producto si todo es válido
         cursor.execute("""
@@ -220,10 +230,16 @@ def modificar_producto(id):
             WHERE id_producto=%s
         """, (nombre, descripcion, cantidad, categoria_id, proveedor_id, ubicacion, id))
         conn.commit()
+        flash("Producto actualizado con éxito.", "success")
         return redirect(url_for('admin_productos'))
 
-    return render_template('/administrador/modificar_productos.html', producto=producto)
-
+    # Renderizar el formulario con los datos actuales
+    return render_template(
+        '/administrador/modificar_productos.html',
+        producto=producto,
+        categorias=categorias,
+        proveedores=proveedores
+    )
 @app.route('/admin/eliminar_producto/<int:id>',methods=['POST'])
 def eliminar_producto(id):
     conn = get_db_connection()

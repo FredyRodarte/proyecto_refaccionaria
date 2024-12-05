@@ -253,6 +253,23 @@ footer {
 .form_mod button:hover {
     background-color: #16A085;
 }
+.form_mod label{
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+
+
+
+.form_mod select{
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
 form.form-proveedor input,
 form.form-proveedor select {
