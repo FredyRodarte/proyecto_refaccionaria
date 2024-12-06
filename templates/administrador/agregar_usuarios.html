@@ -1,18 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Agregar/Modificar Usuario{% endblock %}
+{% block title %}Agregar Usuario{% endblock %}
 
 {% block content %}
-<div class="modal-usuarios">
+<div>
     <div class="titulo">
-        <h2>Agregar/Modificar Usuario</h2>
+        <h2>Agregar Usuario</h2>
     </div>
     <div class="formulario-usuarios" id="formulario">
         
         <form action="{{ url_for('agregar_usuario') }}" method="POST" class="form-usuarios">
-            {% if usuario %}
-                <input type="hidden" name="id_usuario" value="">
-            {% endif %}
 
             <label for="nombre_user">Nombre:</label>
             <input type="text" name="nombre_user" id="nombre_user" required>

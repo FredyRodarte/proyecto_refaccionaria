@@ -22,22 +22,13 @@ function guardarInfo(){
     });
 }
 
-function editarUsuario(id){
-    if (id){
-        window.location.href = `/admin/guardar_usuario?id_usuario=${id}`;
-        console.log('id recibido', id);
-    } else {
-        console.error('El id del usuario esta vacio o indefinido');
-    }
+function editarUsuario(userID) {
+    // Redirigir a la ruta de edición
+    window.location.href = `/editar_usuario/${userID}`;
+}
 
-    /*fetch(`/admin/guardar_usuario?id_usuario=${id}`)
-    .then(response => response.text())
-    .then(html => {
-        document.querySelector('.form-usuarios').innerHTML = html;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });*/
+function guardarEdit(){
+
 }
 
 function eliminarUsuario(userID){
@@ -65,5 +56,10 @@ function eliminarUsuario(userID){
 
 function cancelarUsuario(){
     document.querySelector('.form-usuarios').reset();
+    window.location.href='/admin/usuarios';
+}
+
+function cancelarEditarUsuario(){
+    document.querySelector('.form-editar-usuarios').reset();
     window.location.href='/admin/usuarios';
 }

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import mysql.connector
 from dotenv import load_dotenv
 import os
@@ -105,6 +105,55 @@ def agregar_usuario():
             conn.close()
         
     return render_template('/administrador/agregar_usuarios.html')
+
+@app.route('/editar_usuario/<int:user_id>', methods=['GET'])
+def editar_usuario(user_id):
+    # Obtener conexión a la base de datos
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Consultar los datos del usuario por ID
+    cursor.execute("SELECT * FROM usuarios WHERE id_usuario = %s", (user_id,))
+    usuario = cursor.fetchone()
+    
+    cursor.close()
+    conn.close()
+
+    if usuario:
+        return render_template('/administrador/modificar_usuarios.html', usuario=usuario)
+    else:
+        flash("Usuario no encontrado.", "error")
+        return redirect(url_for('admin_usuarios'))
+
+@app.route('/guardar_usuario', methods=['POST'])
+def guardar_usuario():
+    # Obtener los datos del formulario
+    user_id = request.form['editar_idUsuario']
+    nombre = request.form['editar_nombre_user']
+    nickname = request.form['editar_nickname_user']
+    contraseña = request.form['editar_contraseña_user']
+    rol = request.form['editar_rol_user']
+    
+    # Actualizar los datos en la base de datos
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            UPDATE usuarios 
+            SET nombre = %s, nickname = %s, contraseña = %s, rol = %s 
+            WHERE id_usuario = %s
+        """, (nombre, nickname, contraseña, rol, user_id))
+        conn.commit()
+        flash("Usuario actualizado correctamente.", "success")
+    except Exception as e:
+        conn.rollback()
+        flash(f"Error al actualizar el usuario: {str(e)}", "error")
+    finally:
+        cursor.close()
+        conn.close()
+    
+    return redirect(url_for('admin_usuarios'))
 
 @app.route('/admin/eliminar_usuario/<int:user_id>', methods=['POST'])
 def eliminar_usuario(user_id):
