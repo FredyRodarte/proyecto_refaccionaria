@@ -109,6 +109,8 @@ def eliminar_usuario(user_id):
     finally:
         cursor.close()
         conn.close()
+
+
 #--------------------------------------------------------------------------------------------------------
 #(Eduardo picazo)
 # Aqui estan las funciones para Productos
@@ -180,6 +182,10 @@ def agregar_productos():
         return render_template('/administrador/agregar_productos.html',
                                categorias = categorias,
                                proveedores = proveedores)
+    
+
+
+
 @app.route('/admin/modificar_producto/<int:id>', methods=['GET', 'POST'])
 def modificar_producto(id):
     conn = get_db_connection()
@@ -240,6 +246,8 @@ def modificar_producto(id):
         categorias=categorias,
         proveedores=proveedores
     )
+
+
 @app.route('/admin/eliminar_producto/<int:id>',methods=['POST'])
 def eliminar_producto(id):
     conn = get_db_connection()
