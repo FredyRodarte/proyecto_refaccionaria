@@ -80,10 +80,31 @@ def admin_usuarios():
     conn.close()
     return render_template('administrador/usuarios.html', nombre = session['nombre'], usuarios = usuarios)
 
-@app.route('/admin/guardar_usuario', methods=['GET','POST'])
-def guardar_usuario():
+@app.route('/admin/agregar_usuario', methods=['GET','POST'])
+def agregar_usuario():
+    if request.method == 'POST':
+        nombre = request.form['nombre_user']
+        nickname = request.form['nickname_user']
+        contraseña = request.form['contraseña_user']
+        rol = request.form['rol_user']
 
-    return render_template('/administrador/guardar_usuarios.html', usuario=usuario)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("INSERT INTO usuarios (nombre, nickname, contraseña, rol) VALUES (%s, %s, %s, %s)",
+                            (nombre,nickname,contraseña,rol))
+            conn.commit()
+            flash('Usuario agregado exitosamente','success')
+            return redirect(url_for('usuarios'))
+        except mysql.connector.Error as err:
+            flash(f"Error al agregar el usuario: {err}", 'danger')
+            return render_template('/administrador/agregar_usuarios.html')
+        finally:
+            cursor.close()
+            conn.close()
+        
+    return render_template('/administrador/agregar_usuarios.html')
 
 @app.route('/admin/eliminar_usuario/<int:user_id>', methods=['POST'])
 def eliminar_usuario(user_id):

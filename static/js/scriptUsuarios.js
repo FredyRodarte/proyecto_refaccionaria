@@ -1,14 +1,43 @@
-function guardarUsuario(){
+function agregarUsuario(){
     //abrir el modal de guardar usuarios
-    window.location.href='/admin/guardar_usuario';
+    window.location.href='/admin/agregar_usuario';
 }
 
 function guardarInfo(){
-    //
+    const form = document.querySelector('.form-usuarios');
+    const formData = new FormData(form);
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.text())
+    .then(result => {
+        //console.log('Success:', result);
+        alert('Usuario agregado satisfactoriamente')
+        window.location.href = '/admin/usuarios';
+    })
+    .catch(error => {
+        console.error('Error', error);
+    });
 }
 
 function editarUsuario(id){
-    window.location.href='/admin/guardar_usuario?id=' + id;
+    if (id){
+        window.location.href = `/admin/guardar_usuario?id_usuario=${id}`;
+        console.log('id recibido', id);
+    } else {
+        console.error('El id del usuario esta vacio o indefinido');
+    }
+
+    /*fetch(`/admin/guardar_usuario?id_usuario=${id}`)
+    .then(response => response.text())
+    .then(html => {
+        document.querySelector('.form-usuarios').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });*/
 }
 
 function eliminarUsuario(userID){
@@ -35,5 +64,6 @@ function eliminarUsuario(userID){
 }
 
 function cancelarUsuario(){
+    document.querySelector('.form-usuarios').reset();
     window.location.href='/admin/usuarios';
 }

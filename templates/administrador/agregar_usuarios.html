@@ -8,7 +8,12 @@
         <h2>Agregar/Modificar Usuario</h2>
     </div>
     <div class="formulario-usuarios" id="formulario">
-        <form action="" method="POST" class="form-usuarios">
+        
+        <form action="{{ url_for('agregar_usuario') }}" method="POST" class="form-usuarios">
+            {% if usuario %}
+                <input type="hidden" name="id_usuario" value="">
+            {% endif %}
+
             <label for="nombre_user">Nombre:</label>
             <input type="text" name="nombre_user" id="nombre_user" required>
 
@@ -22,7 +27,7 @@
             <select name="rol_user" id="rol_user">
                 <option value="">Selecciona una opción</option>
                 <option value="administrador">Administrador</option>
-                <option value="almacenista">almacenista</option>
+                <option value="almacenista">Almacenista</option>
             </select>
 
             <button class="primario" type="button" onclick="guardarInfo()">Guardar</button>
