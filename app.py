@@ -110,6 +110,106 @@ def eliminar_usuario(user_id):
         cursor.close()
         conn.close()
 
+#Funciones de categorias: -----------------------------------------------
+@app.route('/admin/categorias')
+def admin_categorias():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT * FROM categorias"
+    cursor.execute(query)
+    categorias = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('administrador/categorias.html', nombre = session['nombre'], categorias=categorias)
+
+#Agregar categoria:
+@app.route('/admin/agregar_categoria', methods=['GET','POST'])
+def agregar_categoria():
+    if request.method == 'POST':
+        nombre = request.form['nombre_cat']
+        descripcion = request.form['descripcion_cat']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("INSERT INTO categorias (nombre,descripcion) VALUES (%s,%s)",
+                            (nombre,descripcion))
+            conn.commit()
+            flash('Categoria agregada exitosamente')
+            return redirect(url_for('categorias'))
+        except mysql.connector.Error as err:
+            flash(f'Error al agregar el usuario: {err}', 'danger')
+            return render_template('/administrador/agregar_categoria.html')
+        finally:
+            cursor.close()
+            conn.close()
+    return render_template('/administrador/agregar_categoria.html')
+
+#Editar categoria:
+@app.route('/editar_categoria/<int:cat_id>', methods=['GET'])
+def editar_categoria(cat_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute('SELECT * FROM categorias WHERE id_categoria = %s', (cat_id,))
+    categoria = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if categoria:
+        return render_template('/administrador/modificar_categoria.html', categoria = categoria)
+    else:
+        flash("Categoria no encontrada.", "error")
+        return redirect(url_for('admin_categorias'))
+
+#Guardar los cambios en la categoria
+@app.route('/guardar_categoria',methods=['POST'])
+def guardar_categoria():
+    cat_id = request.form['editar_idCategoria']
+    nombre = request.form['editar_nombre_cat']
+    descripcion = request.form['editar_descripcion_cat']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("UPDATE categorias SET nombre = %s, descripcion = %s WHERE id_categoria = %s",
+                        (nombre,descripcion,cat_id))
+        conn.commit()
+        flash("Categoria actualizada correctamente.", "success")
+    except Exception as e:
+        conn.rollback()
+        flash(f"Error al actualizar la categoria: {str(e)}", "error")
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for('admin_categorias'))
+#Eliminar categoria:
+@app.route('/admin/eliminar_categoria/<int:cat_id>', methods=['POST'])
+def eliminar_categoria(cat_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM categorias WHERE id_categoria = %s", (cat_id,))
+        conn.commit()
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return '', 204
+        else:
+            flash('Categoria eliminada exitosamente', 'success')
+            return redirect(url_for('categorias'))
+    except mysql.connector.Error as err:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return str(err), 500
+        else:
+            flash(f'Error al elimminar la categoria:{err}', 'danger')
+            return redirect(url_for('categorias'))
+    finally:
+        cursor.close()
+        conn.close()
 
 #--------------------------------------------------------------------------------------------------------
 #(Eduardo picazo)
@@ -136,6 +236,7 @@ def admin_productos():
     cursor.close()
     conn.close()
     return render_template('administrador/productos.html', productos=productos)
+
 
 @app.route('/admin/agregar_producto', methods=['GET', 'POST'])
 def agregar_productos():
@@ -286,7 +387,7 @@ def admin_proveedores():
     proveedores = cursor.fetchall()
     cursor.close()
     conn.close()
-    return render_template('administrador/proveedores.html',proveedores=proveedores)
+    return render_template('administrador/proveedores.html', nombre = session['nombre'], proveedores=proveedores)
 
 @app.route('/admin/agregar_proveedor', methods=['GET', 'POST'])
 def agregar_proveedor():
@@ -339,10 +440,6 @@ def eliminar_proveedor(id):
         cursor.close()
         conn.close()
     return redirect(url_for('admin_proveedores'))
-
-@app.route('/admin/categorias')
-def admin_categorias():
-    return render_template('administrador/categorias.html', nombre = session['nombre'])
 
 @app.route('/admin/movimientos')
 def admin_movimientos():
