@@ -250,8 +250,8 @@ def agregar_productos():
         
 
         return render_template('/administrador/agregar_productos.html',
-                               categorias = categorias,
-                               proveedores = proveedores)
+                                categorias = categorias,
+                                proveedores = proveedores)
     
 
 
