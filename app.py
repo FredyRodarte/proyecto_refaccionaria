@@ -180,6 +180,44 @@ def eliminar_usuario(user_id):
         cursor.close()
         conn.close()
 
+#Funciones de categorias: -----------------------------------------------
+@app.route('/admin/categorias')
+def admin_categorias():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT * FROM categorias"
+    cursor.execute(query)
+    categorias = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('administrador/categorias.html', nombre = session['nombre'], categorias=categorias)
+
+#Agregar categoria:
+@app.route('/admin/agregar_categoria', methods=['GET','POST'])
+def agregar_categoria():
+    if request.method == 'POST':
+        nombre = request.form['nombre_cat']
+        descripcion = request.form['descripcion_cat']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("INSERT INTO categorias (nombre,descripcion) VALUES (%s,%s)",
+                            (nombre,descripcion))
+            conn.commit()
+            flash('Categoria agregada exitosamente')
+            return redirect(url_for('categorias'))
+        except mysql.connector.Error as err:
+            flash(f'Error al agregar el usuario: {err}', 'danger')
+            return render_template('/administrador/agregar_categoria.html')
+        finally:
+            cursor.close()
+            conn.close()
+    return render_template('/administrador/agregar_categoria.html')
+
+#Eliminar categoria:
+#@app.route('/admin/eliminar')
 
 #--------------------------------------------------------------------------------------------------------
 #(Eduardo picazo)
@@ -193,7 +231,7 @@ def admin_productos():
     productos = cursor.fetchall()
     cursor.close()
     conn.close()
-    return render_template('administrador/productos.html', productos = productos)
+    return render_template('administrador/productos.html', nombre = session['nombre'], productos = productos)
 
 @app.route('/admin/agregar_producto', methods=['GET', 'POST'])
 def agregar_productos():
@@ -344,7 +382,7 @@ def admin_proveedores():
     proveedores = cursor.fetchall()
     cursor.close()
     conn.close()
-    return render_template('administrador/proveedores.html',proveedores=proveedores)
+    return render_template('administrador/proveedores.html', nombre = session['nombre'], proveedores=proveedores)
 
 @app.route('/admin/agregar_proveedor', methods=['GET', 'POST'])
 def agregar_proveedor():
@@ -397,10 +435,6 @@ def eliminar_proveedor(id):
         cursor.close()
         conn.close()
     return redirect(url_for('admin_proveedores'))
-
-@app.route('/admin/categorias')
-def admin_categorias():
-    return render_template('administrador/categorias.html', nombre = session['nombre'])
 
 @app.route('/admin/movimientos')
 def admin_movimientos():
