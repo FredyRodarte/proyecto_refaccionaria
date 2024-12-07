@@ -29,8 +29,8 @@
                             <td>{{ cat.nombre }}</td>
                             <td>{{ cat.descripcion }}</td>
                             <td>
-                                <button class="editar-cat" id="accion" onclick="editarCategoria('{{ cat.id_categoria }}')">Editar</button>
-                                <button class="eliminar-cat" id="accion" onclick="eliminarCategoria('{{ cat.id_categoria }}')" >Eliminar</button>
+                                <button class="editar-cat" id="accion" onclick="editarCat('{{ cat.id_categoria }}')">Editar</button>
+                                <button class="eliminar-cat" id="accion" onclick="eliminarCat('{{ cat.id_categoria }}')" >Eliminar</button>
                             </td>
                         </tr>
                         {% endfor %}

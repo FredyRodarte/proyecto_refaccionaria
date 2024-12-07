@@ -217,7 +217,29 @@ def agregar_categoria():
     return render_template('/administrador/agregar_categoria.html')
 
 #Eliminar categoria:
-#@app.route('/admin/eliminar')
+@app.route('/admin/eliminar_categoria/<int:cat_id>', methods=['POST'])
+def eliminar_categoria(cat_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM categorias WHERE id_categoria = %s", (cat_id,))
+        conn.commit()
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return '', 204
+        else:
+            flash('Categoria eliminada exitosamente', 'success')
+            return redirect(url_for('categorias'))
+    except mysql.connector.Error as err:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return str(err), 500
+        else:
+            flash(f'Error al elimminar la categoria:{err}', 'danger')
+            return redirect(url_for('categorias'))
+    finally:
+        cursor.close()
+        conn.close()
 
 #--------------------------------------------------------------------------------------------------------
 #(Eduardo picazo)
