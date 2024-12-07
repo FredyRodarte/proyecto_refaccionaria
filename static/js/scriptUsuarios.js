@@ -53,8 +53,8 @@ function editarUsuario(userID) {
     window.location.href = `/editar_usuario/${userID}`;
 }
 
-function guardarEdit(){
-
+function editarCat(catID){
+    window.location.href = `/editar_categoria/${catID}`;
 }
 
 //Funcion eliminar
@@ -115,5 +115,10 @@ function cancelarEditarUsuario(){
 
 function cancelarCat(){
     document.querySelector('.form-categorias').reset();
+    window.location.href='/admin/categorias';
+}
+
+function cancelarEditarCat(){
+    document.querySelector('.form-editar-categoria').reset();
     window.location.href='/admin/categorias';
 }

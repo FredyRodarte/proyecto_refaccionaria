@@ -216,6 +216,46 @@ def agregar_categoria():
             conn.close()
     return render_template('/administrador/agregar_categoria.html')
 
+#Editar categoria:
+@app.route('/editar_categoria/<int:cat_id>', methods=['GET'])
+def editar_categoria(cat_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute('SELECT * FROM categorias WHERE id_categoria = %s', (cat_id,))
+    categoria = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if categoria:
+        return render_template('/administrador/modificar_categoria.html', categoria = categoria)
+    else:
+        flash("Categoria no encontrada.", "error")
+        return redirect(url_for('admin_categorias'))
+
+#Guardar los cambios en la categoria
+@app.route('/guardar_categoria',methods=['POST'])
+def guardar_categoria():
+    cat_id = request.form['editar_idCategoria']
+    nombre = request.form['editar_nombre_cat']
+    descripcion = request.form['editar_descripcion_cat']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("UPDATE categorias SET nombre = %s, descripcion = %s WHERE id_categoria = %s",
+                        (nombre,descripcion,cat_id))
+        conn.commit()
+        flash("Categoria actualizada correctamente.", "success")
+    except Exception as e:
+        conn.rollback()
+        flash(f"Error al actualizar la categoria: {str(e)}", "error")
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for('admin_categorias'))
 #Eliminar categoria:
 @app.route('/admin/eliminar_categoria/<int:cat_id>', methods=['POST'])
 def eliminar_categoria(cat_id):
