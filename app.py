@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import mysql.connector
 from dotenv import load_dotenv
 import os
@@ -80,80 +80,10 @@ def admin_usuarios():
     conn.close()
     return render_template('administrador/usuarios.html', nombre = session['nombre'], usuarios = usuarios)
 
-@app.route('/admin/agregar_usuario', methods=['GET','POST'])
-def agregar_usuario():
-    if request.method == 'POST':
-        nombre = request.form['nombre_user']
-        nickname = request.form['nickname_user']
-        contraseña = request.form['contraseña_user']
-        rol = request.form['rol_user']
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-
-        try:
-            cursor.execute("INSERT INTO usuarios (nombre, nickname, contraseña, rol) VALUES (%s, %s, %s, %s)",
-                            (nombre,nickname,contraseña,rol))
-            conn.commit()
-            flash('Usuario agregado exitosamente','success')
-            return redirect(url_for('usuarios'))
-        except mysql.connector.Error as err:
-            flash(f"Error al agregar el usuario: {err}", 'danger')
-            return render_template('/administrador/agregar_usuarios.html')
-        finally:
-            cursor.close()
-            conn.close()
-        
-    return render_template('/administrador/agregar_usuarios.html')
-
-@app.route('/editar_usuario/<int:user_id>', methods=['GET'])
-def editar_usuario(user_id):
-    # Obtener conexión a la base de datos
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    
-    # Consultar los datos del usuario por ID
-    cursor.execute("SELECT * FROM usuarios WHERE id_usuario = %s", (user_id,))
-    usuario = cursor.fetchone()
-    
-    cursor.close()
-    conn.close()
-
-    if usuario:
-        return render_template('/administrador/modificar_usuarios.html', usuario=usuario)
-    else:
-        flash("Usuario no encontrado.", "error")
-        return redirect(url_for('admin_usuarios'))
-
-@app.route('/guardar_usuario', methods=['POST'])
+@app.route('/admin/guardar_usuario', methods=['GET','POST'])
 def guardar_usuario():
-    # Obtener los datos del formulario
-    user_id = request.form['editar_idUsuario']
-    nombre = request.form['editar_nombre_user']
-    nickname = request.form['editar_nickname_user']
-    contraseña = request.form['editar_contraseña_user']
-    rol = request.form['editar_rol_user']
-    
-    # Actualizar los datos en la base de datos
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    try:
-        cursor.execute("""
-            UPDATE usuarios 
-            SET nombre = %s, nickname = %s, contraseña = %s, rol = %s 
-            WHERE id_usuario = %s
-        """, (nombre, nickname, contraseña, rol, user_id))
-        conn.commit()
-        flash("Usuario actualizado correctamente.", "success")
-    except Exception as e:
-        conn.rollback()
-        flash(f"Error al actualizar el usuario: {str(e)}", "error")
-    finally:
-        cursor.close()
-        conn.close()
-    
-    return redirect(url_for('admin_usuarios'))
+
+    return render_template('/administrador/guardar_usuarios.html', usuario=usuario)
 
 @app.route('/admin/eliminar_usuario/<int:user_id>', methods=['POST'])
 def eliminar_usuario(user_id):
@@ -188,12 +118,24 @@ def eliminar_usuario(user_id):
 def admin_productos():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    query = "SELECT id_producto, nombre, descripcion,cantidad, categoria_id, proveedor_id, ubicacion FROM Productos"
+    query = """
+        SELECT 
+            p.id_producto, 
+            p.nombre AS nombre_producto, 
+            p.descripcion, 
+            p.cantidad, 
+            c.nombre AS nombre_categoria, 
+            pr.nombre AS nombre_proveedor, 
+            p.ubicacion
+        FROM Productos p
+        JOIN Categorias c ON p.categoria_id = c.id_categoria
+        JOIN Proveedores pr ON p.proveedor_id = pr.id_proveedor
+    """
     cursor.execute(query)
     productos = cursor.fetchall()
     cursor.close()
     conn.close()
-    return render_template('administrador/productos.html', productos = productos)
+    return render_template('administrador/productos.html', productos=productos)
 
 @app.route('/admin/agregar_producto', methods=['GET', 'POST'])
 def agregar_productos():
@@ -250,8 +192,8 @@ def agregar_productos():
         
 
         return render_template('/administrador/agregar_productos.html',
-                                categorias = categorias,
-                                proveedores = proveedores)
+                               categorias = categorias,
+                               proveedores = proveedores)
     
 
 
