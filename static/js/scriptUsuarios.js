@@ -46,7 +46,7 @@ function guardarCat(){
     });
 }
 
-//-
+//Funcion editar 
 
 function editarUsuario(userID) {
     // Redirigir a la ruta de edición

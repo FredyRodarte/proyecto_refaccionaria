@@ -497,11 +497,35 @@ def eliminar_proveedor(id):
         cursor.close()
         conn.close()
     return redirect(url_for('admin_proveedores'))
+#----------------------------------------------------------------------------------------
 
+#Aqui estan las funciones de movimientos
 @app.route('/admin/movimientos')
 def admin_movimientos():
-    return render_template('administrador/movimientos.html', nombre = session['nombre'])
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
 
+    
+    cursor.execute('''SELECT
+                        M.id_movimiento, 
+                        M.fecha, M.tipo,
+                        P.nombre AS nombre_producto,
+                        M.cantidad,
+                        U.nombre AS nombre_usuario,
+                        M.comentarios
+                    FROM movimientosinventario M 
+                    JOIN productos P ON M.producto_id = P.id_producto
+                    JOIN usuarios U ON M.usuario_id = U.id_usuario''')
+    movimientos = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    
+    return render_template('administrador/movimientos.html', nombre = session['nombre'], movimientos = movimientos)
+
+@app.route('/admin/eliminar_movimiento/<int:id>', methods=['POST'])
+def eliminar_movimiento():
+    return ""
+#----------------------------------------------------------------------------------
 #Ruta para cerrar sesion
 @app.route('/logout')
 def logout():
